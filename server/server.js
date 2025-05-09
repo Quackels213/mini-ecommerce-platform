@@ -2,12 +2,15 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { PrismaClient } from '@prisma/client';
+import path from "path";
+import { fileURLToPath } from "url";
 
 dotenv.config();
 
 const prisma = new PrismaClient();
 const app = express();
 const port = process.env.PORT || 5001;
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 app.use(cors());
 app.use(express.json());
@@ -81,12 +84,12 @@ app.get('/api/products/search', async (req, res) => {
 // Create a product
 app.post('/api/products', async (req, res) => {
   const { name, price, description, imageUrl } = req.body;
-  
+
   try {
     if (!name || !price || !description) {
       return res.status(400).json({ error: 'Name, price, and description are required' });
     }
-    
+
     const product = await prisma.product.create({
       data: {
         name,
@@ -95,13 +98,21 @@ app.post('/api/products', async (req, res) => {
         imageUrl: imageUrl || null
       }
     });
-    
+
     res.status(201).json(product);
   } catch (error) {
     console.error('Error creating product:', error);
     res.status(500).json({ error: 'Failed to create product' });
   }
 });
+
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "../dist")));
+
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "../dist/index.html"));
+  });
+}
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
