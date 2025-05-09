@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "npx prisma generate && vite build",
+    "build": "npm install && npx prisma generate && npx vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "start": "node server/server.js"

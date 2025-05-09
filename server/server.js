@@ -12,8 +12,10 @@ const app = express();
 const port = process.env.PORT || 5001;
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-app.use(cors());
 app.use(express.json());
+app.use(cors({
+  origin: "http://localhost:5173" || '*'
+}));
 
 // Get all products
 app.get('/api/products', async (req, res) => {
@@ -106,11 +108,11 @@ app.post('/api/products', async (req, res) => {
   }
 });
 
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "../dist")));
-
-  app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "../dist/index.html"));
+// Serve frontend (production only)
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '../dist')));
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../dist/index.html'));
   });
 }
 
