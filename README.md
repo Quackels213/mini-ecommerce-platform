@@ -66,11 +66,16 @@ The app breaks it into **keywords** like `sit`, `family` and returns products wh
 ├── package.json
 ├── README.md
 
-### ⚙️ Installation
+```
 
-1. **Fork this repository:** Click the Fork button located in the top-right corner of this page.
+
+## ⚙️ Installation
+
+1. **Fork this repository:** 
+   Click the Fork button located in the top-right corner of this page.
+
 2. **Clone the repository:**
-   ```bash
+   
    git clone https://github.com/<your-username>/mini-ecommerce-platform.git
    ```
 3. **Create .env file:**
