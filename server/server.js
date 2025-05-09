@@ -2,15 +2,18 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { PrismaClient } from '@prisma/client';
-import path from "path";
-import { fileURLToPath } from "url";
+import path from 'path';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
 
 dotenv.config();
 
 const prisma = new PrismaClient();
 const app = express();
 const port = process.env.PORT || 5001;
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 
 app.use(express.json());
 app.use(cors({
@@ -108,12 +111,21 @@ app.post('/api/products', async (req, res) => {
   }
 });
 
-// Serve frontend (production only)
+// Static file serving in production
 if (process.env.NODE_ENV === 'production') {
-  const staticPath = path.resolve(__dirname, '../dist');
-  app.use(express.static(staticPath));
+  const distPath = path.join(__dirname, '../Frontend/dist');
 
-  app.get('*', (_, res) => res.sendFile(path.join(staticPath, 'index.html')));
+  if (fs.existsSync(distPath)) {
+    console.log('Serving frontend from:', distPath);
+    app.use(express.static(distPath));
+
+    // Catch-all fallback **without route parsing**
+    app.use((req, res, next) => {
+      res.sendFile(path.join(distPath, 'index.html'));
+    });
+  } else {
+    console.warn('⚠️ Frontend dist folder not found. Skipping static file setup.');
+  }
 }
 
 app.listen(port, () => {
