@@ -14,7 +14,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 app.use(express.json());
 app.use(cors({
-  origin: "http://localhost:5173" || '*'
+  origin: "http://localhost:5173" || '*'  // You might replace this with an array for safety later
 }));
 
 // Get all products
@@ -110,9 +110,11 @@ app.post('/api/products', async (req, res) => {
 
 // Serve frontend (production only)
 if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../dist')));
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../dist/index.html'));
+  const staticPath = path.resolve(__dirname, '../dist');
+  app.use(express.static(staticPath));
+
+  app.get('/*', (req, res) => {
+    res.sendFile(path.join(staticPath, 'index.html'));
   });
 }
 
