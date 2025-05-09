@@ -113,7 +113,7 @@ app.post('/api/products', async (req, res) => {
 
 // Static file serving in production
 if (process.env.NODE_ENV === 'production') {
-  const distPath = path.join(__dirname, '../Frontend/dist');
+  const distPath = path.join(__dirname, '../dist');
 
   if (fs.existsSync(distPath)) {
     console.log('Serving frontend from:', distPath);
